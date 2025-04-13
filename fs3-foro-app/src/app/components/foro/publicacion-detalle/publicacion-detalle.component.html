@@ -1,0 +1,32 @@
+<div class="container mt-4" *ngIf="publicacion">
+    <h2>{{ publicacion.titulo }}</h2>
+    <p class="text-muted">Creado el {{ publicacion.fechaCreacion | date:'short' }}</p>
+    <p>{{ publicacion.contenido }}</p>
+  
+    <hr />
+    <h4>Comentarios</h4>
+  
+    <div *ngIf="comentarios.length === 0" class="alert alert-info">
+      No hay comentarios aún.
+    </div>
+  
+    <ul class="list-group mb-4">
+      <li class="list-group-item" *ngFor="let c of comentarios">
+        {{ c.contenido }}
+        <br />
+        <small class="text-muted">Usuario ID {{ c.usuarioId }} - {{ c.fecha | date:'short' }}</small>
+      </li>
+    </ul>
+  
+    <form [formGroup]="comentarioForm" (ngSubmit)="enviarComentario()">
+      <div class="mb-3">
+        <label>Agregar comentario</label>
+        <textarea class="form-control" formControlName="contenido"></textarea>
+        <div *ngIf="submitted && comentarioForm.get('contenido')?.invalid" class="text-danger">
+          El comentario no puede estar vacío
+        </div>
+      </div>
+      <button type="submit" class="btn btn-primary">Comentar</button>
+    </form>
+  </div>
+  

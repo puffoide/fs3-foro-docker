@@ -1,0 +1,42 @@
+<div class="container my-5">
+  <div class="row justify-content-center align-items-center g-5">
+    <div class="col-md-12">
+      <div class="card p-4 shadow">
+        <h3 class="text-center mb-3">Editar Perfil</h3>
+        <form [formGroup]="form" (ngSubmit)="guardarCambios()">
+          <div class="mb-3">
+            <label class="form-label">Nombre de usuario</label>
+            <input type="text" class="form-control" formControlName="username" />
+            <div *ngIf="submitted && form.get('username')?.invalid" class="text-danger">
+              Nombre de usuario requerido
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Nueva contraseña</label>
+            <input type="password" class="form-control" formControlName="password" />
+            <div *ngIf="submitted && form.get('password')?.errors?.['required']" class="text-danger">
+              Contraseña requerida
+            </div>
+            <div *ngIf="submitted && form.get('password')?.errors?.['pattern']" class="text-danger">
+              Mínimo 8 caracteres, 1 mayúscula, 1 número, 1 símbolo
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Rol</label>
+            <select class="form-select" formControlName="role">
+              <option value="USER">Usuario</option>
+              <option value="ADMIN">Administrador</option>
+            </select>
+          </div>
+
+          <button type="submit" class="btn btn-primary w-100">Guardar Cambios</button>
+
+          <div *ngIf="success" class="alert alert-success mt-3">Cambios guardados correctamente</div>
+          <div *ngIf="error" class="alert alert-danger mt-3">Error al actualizar perfil</div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

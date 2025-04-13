@@ -1,0 +1,21 @@
+<div class="container mt-5">
+    <h3 class="text-center">Mi Perfil</h3>
+  
+    <div *ngIf="loading" class="text-center my-4">
+      <div class="spinner-border text-primary" role="status"></div>
+    </div>
+  
+    <div *ngIf="error" class="alert alert-danger">Error al cargar perfil.</div>
+  
+    <div *ngIf="user" class="card mt-4">
+      <div class="card-body">
+        <h5 class="card-title">Usuario: {{ user.username }}</h5>
+        <p class="card-text"><strong>Rol:</strong> {{ user.role }}</p>
+      </div>
+    </div>
+    <div class="d-flex justify-content-end mt-3">
+      <a routerLink="/editar-perfil" class="btn btn-outline-secondary">Editar Perfil</a>
+    </div>
+
+  </div>
+  
