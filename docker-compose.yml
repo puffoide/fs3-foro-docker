@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  backend:
+    build: ./fs3-foro-ms
+    container_name: foro-backend
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./fs3-foro-ms/Wallet_JZJTIXGSTLVPJ05V:/app/wallet
+    environment:
+      TNS_ADMIN: /app/wallet
+    networks:
+      - foro-net
+
+  frontend:
+    build: ./fs3-foro-app
+    container_name: foro-frontend
+    ports:
+      - "4200:80"
+    networks:
+      - foro-net
+    depends_on:
+      - backend
+
+networks:
+  foro-net:
