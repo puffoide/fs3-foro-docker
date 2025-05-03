@@ -4,7 +4,6 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
 import { AutenticacionService } from '../../../services/autenticacion.service';
 import { UserDTO } from '../../../models/usuario.model';
 import { Router } from '@angular/router';
-import { SessionService } from '../../../services/session.service';
 
 @Component({
   selector: 'app-editar-perfil',
@@ -24,7 +23,6 @@ export class EditarPerfilComponent implements OnInit {
     private fb: FormBuilder,
     private authService: AutenticacionService,
     private router: Router,
-    private sessionService: SessionService
   ) {
     this.form = this.fb.group({
       username: ['', Validators.required],
@@ -38,69 +36,42 @@ export class EditarPerfilComponent implements OnInit {
       role: ['USER']
     });
 
-    this.userId = this.sessionService.getUser()?.id ?? 0;
 
   }
 
   ngOnInit(): void {
-    if (!this.sessionService.isLoggedIn()) {
+    if (!this.authService.estaAutenticado()) {
       this.router.navigate(['/login']);
       return;
     }
-
-    const usuario = this.sessionService.getUser();
-  if (usuario) {
-    this.form.setValue({
-      username: usuario.username,
-      password: usuario.password,
-      role: usuario.role
-    });
+  
+    const usuario = this.authService.obtenerUsuarioActivo();
+    if (usuario) {
+      this.form.setValue({
+        username: usuario.username,
+        password: usuario.password,
+        role: usuario.role
+      });
+      this.userId = usuario.id;
+    }
   }
-
-    // this.authService.getUserById(this.userId).subscribe({
-    //   next: (user) => {
-    //     this.form.patchValue(user);
-    //   },
-    //   error: () => {
-    //     this.error = true;
-    //   }
-    // });
-  }
-
+  
   guardarCambios(): void {
-    
     this.submitted = true;
-
     if (this.form.invalid) return;
   
-    const usuarioActualizado: UserDTO = {
+    const actualizado: UserDTO = {
       ...this.form.value,
-      id: this.sessionService.getUser()?.id || 0
+      id: this.userId
     };
   
-    this.sessionService.setUser(usuarioActualizado);
-  
-    const listaUsuarios = this.sessionService.getUsersList();
-    const index = listaUsuarios.findIndex(u => u.id === usuarioActualizado.id);
-    if (index !== -1) {
-      listaUsuarios[index] = usuarioActualizado;
-      this.sessionService.saveUsersList(listaUsuarios);
-    }
-  
-    this.success = true;
-    setTimeout(() => this.router.navigate(['/perfil']), 1500);
-    
-    // this.submitted = true;
-    // if (this.form.invalid) return;
-
-    // this.authService.updateUser(this.userId, this.form.value).subscribe({
-    //   next: () => {
-    //     this.success = true;
-    //     setTimeout(() => this.router.navigate(['/perfil']), 1500);
-    //   },
-    //   error: () => {
-    //     this.error = true;
-    //   }
-    // });
-  }
+    this.authService.updateUser(this.userId, actualizado).subscribe({
+      next: () => {
+        this.authService.guardarUsuarioEnSesion(actualizado);
+        this.success = true;
+        setTimeout(() => this.router.navigate(['/perfil']), 1500);
+      },
+      error: () => this.error = true
+    });
+  }  
 }

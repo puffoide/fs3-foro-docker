@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
-import { SessionService } from '../../../services/session.service';
+import { AutenticacionService } from '../../../services/autenticacion.service';
 import { UserDTO } from '../../../models/usuario.model';
 
 @Component({
@@ -14,20 +14,21 @@ import { UserDTO } from '../../../models/usuario.model';
 export class NavbarComponent {
 
   constructor(
-    public sessionService: SessionService,
+    private authService: AutenticacionService,
     private router: Router
   ){}
   
   get isLoggedIn(): boolean {
-    return this.sessionService.isLoggedIn();
+    return this.authService.estaAutenticado();
   }
   
   get user(): UserDTO | null {
-    return this.sessionService.getUser();
+    return this.authService.obtenerUsuarioActivo();
   }
-
+  
   logout(): void {
-    this.sessionService.logout();
+    this.authService.logout();
     this.router.navigate(['/']);
-  }
+  }  
+  
 }

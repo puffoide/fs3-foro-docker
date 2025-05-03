@@ -20,8 +20,7 @@ export class LoginComponent {
 
   constructor(
     private fb: FormBuilder, 
-    private authService: AutenticacionService, 
-    private sessionService: SessionService,
+    private authService: AutenticacionService,
     private router: Router
   ) {
     this.loginForm = this.fb.group({
@@ -38,15 +37,11 @@ export class LoginComponent {
   
     const { username, password } = this.loginForm.value;
   
-    const user = this.sessionService.findUserByCredentials(username, password);
-  
-    if (user) {
-      this.sessionService.setUser(user);
-      this.router.navigate(['/foro']);
-    } else {
-      this.loginError = 'Credenciales inválidas';
-    }
-  }
+    this.authService.login({ usuario: username, password }).subscribe({
+      next: () => this.router.navigate(['/foro']),
+      error: () => this.loginError = 'Credenciales inválidas'
+    });
+  }  
   
   
 }

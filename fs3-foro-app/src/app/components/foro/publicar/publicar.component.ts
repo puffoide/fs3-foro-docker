@@ -4,7 +4,7 @@ import { ForoService } from '../../../services/foro.service';
 import { CategoriaDTO } from '../../../models/categoria.model';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { SessionService } from '../../../services/session.service';
+import { AutenticacionService } from '../../../services/autenticacion.service';
 
 @Component({
   selector: 'app-publicar',
@@ -23,7 +23,7 @@ export class PublicarComponent implements OnInit {
     private fb: FormBuilder,
     private foroService: ForoService,
     private router: Router,
-    private sessionService: SessionService
+    private authService: AutenticacionService,
   ) {
     this.form = this.fb.group({
       titulo: ['', [Validators.required, Validators.minLength(5)]],
@@ -34,17 +34,21 @@ export class PublicarComponent implements OnInit {
   }
 
   ngOnInit(): void {
-
-    if (!this.sessionService.isLoggedIn()) {
+    if (!this.authService.estaAutenticado()) {
       this.router.navigate(['/login']);
       return;
     }
-
+  
     this.foroService.getCategorias().subscribe({
       next: data => this.categorias = data,
       error: () => alert('Error al cargar categorías')
     });
-  }
+  
+    const usuario = this.authService.obtenerUsuarioActivo();
+    if (usuario) {
+      this.form.patchValue({ usuarioId: usuario.id });
+    }
+  }  
 
   publicar(): void {
     this.submitted = true;

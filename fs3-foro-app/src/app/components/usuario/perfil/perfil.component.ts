@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AutenticacionService } from '../../../services/autenticacion.service';
 import { UserDTO } from '../../../models/usuario.model';
-import { SessionService } from '../../../services/session.service';
 import { Router, RouterModule } from '@angular/router';
 
 @Component({
@@ -18,33 +17,18 @@ export class PerfilComponent implements OnInit {
   error = false;
 
   constructor(
-    private authService: AutenticacionService, 
-    private sessionService: SessionService, 
+    private authService: AutenticacionService,  
     private router: Router
   ) {}
 
   ngOnInit(): void {
-    
-    if (!this.sessionService.isLoggedIn()) {
-      this.router.navigate(['/login']); 
+    if (!this.authService.estaAutenticado()) {
+      this.router.navigate(['/login']);
       return;
     }
-
-    this.user = this.sessionService.getUser();
+  
+    this.user = this.authService.obtenerUsuarioActivo();
     this.loading = false;
-
-    // const userId = this.sessionService.getUser()?.id ?? 0;
-
-    // this.authService.getUserById(userId).subscribe({
-    //   next: data => {
-    //     this.user = data;
-    //     this.loading = false;
-    //   },
-    //   error: () => {
-    //     this.error = true;
-    //     this.loading = false;
-    //   }
-    // });
-    
-  }
+  }  
+  
 }

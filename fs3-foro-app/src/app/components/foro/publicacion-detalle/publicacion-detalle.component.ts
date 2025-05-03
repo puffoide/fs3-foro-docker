@@ -6,7 +6,7 @@ import { ComentarioDTO } from '../../../models/comentario.model';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { SessionService } from '../../../services/session.service';
+import { AutenticacionService } from '../../../services/autenticacion.service';
 
 @Component({
   selector: 'app-publicacion-detalle',
@@ -25,7 +25,7 @@ export class PublicacionDetalleComponent implements OnInit {
     private route: ActivatedRoute,
     private foroService: ForoService,
     private fb: FormBuilder,
-    private sessionService: SessionService,
+    private authService: AutenticacionService,
     private router: Router
   ) {
     this.comentarioForm = this.fb.group({
@@ -35,16 +35,21 @@ export class PublicacionDetalleComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    if (!this.sessionService.isLoggedIn()) {
+    if (!this.authService.estaAutenticado()) {
       this.router.navigate(['/login']);
       return;
     }
-
+  
     const id = Number(this.route.snapshot.paramMap.get('id'));
-
     this.foroService.getPublicacion(id).subscribe(p => this.publicacion = p);
     this.foroService.getComentariosByPublicacion(id).subscribe(c => this.comentarios = c);
+  
+    const usuario = this.authService.obtenerUsuarioActivo();
+    if (usuario) {
+      this.comentarioForm.patchValue({ usuarioId: usuario.id });
+    }
   }
+  
 
   enviarComentario(): void {
     this.submitted = true;

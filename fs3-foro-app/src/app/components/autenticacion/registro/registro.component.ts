@@ -1,14 +1,8 @@
 import { Component } from '@angular/core';
-import {
-  FormBuilder,
-  FormGroup,
-  Validators,
-  ReactiveFormsModule,
-} from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { AutenticacionService } from '../../../services/autenticacion.service';
 import { Router, RouterModule } from '@angular/router';
-import { SessionService } from '../../../services/session.service';
 import { UserDTO } from '../../../models/usuario.model';
 
 @Component({
@@ -23,12 +17,11 @@ export class RegistroComponent {
   submitted = false;
   registroExitoso = false;
   registroError = false;
-  mensajeError = 'Ocurrió un error al registrarse.'; 
+  mensajeError = 'Ocurrió un error al registrarse.';
 
   constructor(
     private fb: FormBuilder,
     private authService: AutenticacionService,
-    private sessionService: SessionService,
     private router: Router
   ) {
     this.registerForm = this.fb.group({
@@ -50,29 +43,25 @@ export class RegistroComponent {
     this.submitted = true;
     this.registroExitoso = false;
     this.registroError = false;
-
+  
     if (this.registerForm.invalid) return;
-
-    const username = this.registerForm.value.username;
-
-    if (this.sessionService.usernameExists(username)) {
-      this.registroError = true;
-      this.mensajeError = 'El nombre de usuario ya existe.';
-      return;
-    }
-
+  
     const nuevoUsuario: UserDTO = {
       ...this.registerForm.value,
-      id: Math.floor(Math.random() * 1000) + 1,
+      id: Math.floor(Math.random() * 1000) + 1
     };
-
-    this.sessionService.saveUserToList(nuevoUsuario);
-    this.sessionService.setUser(nuevoUsuario);
-
-    this.registroExitoso = true;
-
-    setTimeout(() => {
-      this.router.navigate(['/foro']);
-    }, 1500);
+  
+    this.authService.register(nuevoUsuario).subscribe({
+      next: () => {
+        this.authService.guardarUsuarioEnSesion(nuevoUsuario);
+        this.registroExitoso = true;
+        setTimeout(() => this.router.navigate(['/foro']), 1500);
+      },
+      error: () => {
+        this.registroError = true;
+        this.mensajeError = 'Error al registrar el usuario.';
+      }
+    });
   }
+  
 }
