@@ -11,7 +11,7 @@ public class Comentario {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String contenido;
-    private LocalDateTime fechaComentario;
+    private LocalDateTime fecha;
     @ManyToOne
     @JoinColumn(name = "publicacion_id")
     private Publicacion publicacion;
@@ -31,11 +31,11 @@ public class Comentario {
     public void setContenido(String contenido) {
         this.contenido = contenido;
     }
-    public LocalDateTime getFechaComentario() {
-        return fechaComentario;
+    public LocalDateTime getFechaTime() {
+        return fecha;
     }
-    public void setFechaComentario(LocalDateTime fechaComentario) {
-        this.fechaComentario = fechaComentario;
+    public void setFecha(LocalDateTime fecha) {
+        this.fecha = fecha;
     }
     public Publicacion getPublicacion() {
         return publicacion;

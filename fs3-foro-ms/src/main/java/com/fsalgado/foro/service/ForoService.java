@@ -106,7 +106,7 @@ public class ForoService {
     public ComentarioDTO addComentario(ComentarioDTO dto) {
         Comentario c = new Comentario();
         c.setContenido(dto.getContenido());
-        c.setFechaComentario(dto.getFecha());
+        c.setFecha(dto.getFecha());
 
         Publicacion p = new Publicacion();
         p.setId(dto.getPublicacionId());
@@ -117,13 +117,13 @@ public class ForoService {
         c.setUsuario(u);
 
         Comentario saved = comentarioRepo.save(c);
-        return new ComentarioDTO(saved.getId(), saved.getContenido(), saved.getFechaComentario(), saved.getPublicacion().getId(), saved.getUsuario().getId());
+        return new ComentarioDTO(saved.getId(), saved.getContenido(), saved.getFechaTime(), saved.getPublicacion().getId(), saved.getUsuario().getId());
     }
 
     public ComentarioDTO updateComentario(Long id, ComentarioDTO dto) {
         return comentarioRepo.findById(id).map(c -> {
             c.setContenido(dto.getContenido());
-            c.setFechaComentario(dto.getFecha());
+            c.setFecha(dto.getFecha());
 
             Publicacion p = new Publicacion();
             p.setId(dto.getPublicacionId());
@@ -134,7 +134,7 @@ public class ForoService {
             c.setUsuario(u);
 
             Comentario updated = comentarioRepo.save(c);
-            return new ComentarioDTO(updated.getId(), updated.getContenido(), updated.getFechaComentario(), updated.getPublicacion().getId(), updated.getUsuario().getId());
+            return new ComentarioDTO(updated.getId(), updated.getContenido(), updated.getFechaTime(), updated.getPublicacion().getId(), updated.getUsuario().getId());
         }).orElseThrow(() -> new RuntimeException("Comentario no encontrado"));
     }
 
@@ -144,7 +144,7 @@ public class ForoService {
                 .map(c -> new ComentarioDTO(
                 c.getId(),
                 c.getContenido(),
-                c.getFechaComentario(),
+                c.getFechaTime(),
                 c.getPublicacion().getId(),
                 c.getUsuario().getId(),
                 c.getUsuario().getUsername(),

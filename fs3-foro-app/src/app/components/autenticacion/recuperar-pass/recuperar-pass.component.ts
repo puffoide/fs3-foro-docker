@@ -26,7 +26,6 @@ export class RecuperarPassComponent {
 
     if (this.form.invalid) return;
 
-    // Simulación de recuperación
     setTimeout(() => {
       this.enviado = true;
     }, 1000);

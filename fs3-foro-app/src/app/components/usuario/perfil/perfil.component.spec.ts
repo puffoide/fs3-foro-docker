@@ -29,7 +29,7 @@ describe('PerfilComponent', () => {
       providers: [
         { provide: AutenticacionService, useValue: authSpy },
         { provide: ActivatedRoute, useValue: activatedRouteStub }
-        // ❌ NO se provee Router aquí manualmente
+      
       ]
     }).compileComponents();
 

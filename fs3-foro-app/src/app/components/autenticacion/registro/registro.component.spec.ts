@@ -24,12 +24,11 @@ describe('RegistroComponent', () => {
       imports: [
         RegistroComponent,
         ReactiveFormsModule,
-        RouterTestingModule.withRoutes([]) // ✅ usa rutas vacías para evitar errores
+        RouterTestingModule.withRoutes([]) 
       ],
       providers: [
         { provide: AutenticacionService, useValue: authSpy },
         { provide: ActivatedRoute, useValue: activatedRouteStub }
-        // ❌ no proveas Router manualmente, lo hace RouterTestingModule
       ]
     }).compileComponents();
 
@@ -37,7 +36,7 @@ describe('RegistroComponent', () => {
     component = fixture.componentInstance;
     authServiceSpy = TestBed.inject(AutenticacionService) as jasmine.SpyObj<AutenticacionService>;
     router = TestBed.inject(Router);
-    spyOn(router, 'navigate'); // ✅ aquí sí lo espiamos correctamente
+    spyOn(router, 'navigate');
     fixture.detectChanges();
   });
 

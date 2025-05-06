@@ -28,7 +28,7 @@ describe('NavbarComponent', () => {
     await TestBed.configureTestingModule({
       imports: [
         NavbarComponent,
-        RouterTestingModule.withRoutes([]) // ✅ Importante para routerLink, ActivatedRoute, etc.
+        RouterTestingModule.withRoutes([])
       ],
       providers: [
         { provide: AutenticacionService, useValue: authSpy }
@@ -39,7 +39,7 @@ describe('NavbarComponent', () => {
     component = fixture.componentInstance;
     authServiceSpy = TestBed.inject(AutenticacionService) as jasmine.SpyObj<AutenticacionService>;
     router = TestBed.inject(Router);
-    spyOn(router, 'navigate'); // ✅ Espiar después de inyectar
+    spyOn(router, 'navigate'); 
   });
 
   it('debería crear el componente', () => {

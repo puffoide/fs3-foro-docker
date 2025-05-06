@@ -7,7 +7,6 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { of, throwError } from 'rxjs';
 import { Component } from '@angular/core';
 
-// Dummy para la ruta '/foro'
 @Component({ template: '' })
 class DummyComponent {}
 
