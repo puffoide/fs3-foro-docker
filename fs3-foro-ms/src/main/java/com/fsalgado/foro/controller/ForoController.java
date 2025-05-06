@@ -85,6 +85,14 @@ public class ForoController {
         return foroService.addPublicacion(publicacionDTO);
     }
 
+    @GetMapping("/publicaciones/{id}")
+    public ResponseEntity<PublicacionDTO> getPublicacionById(@PathVariable Long id) {
+        return foroService.getPublicacionById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+
     @PutMapping("/publicaciones/{id}")
     public PublicacionDTO updatePublicacion(@PathVariable Long id, @RequestBody PublicacionDTO publicacionDTO) {
         return foroService.updatePublicacion(id, publicacionDTO);

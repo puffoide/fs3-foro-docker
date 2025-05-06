@@ -8,16 +8,29 @@ public class ComentarioDTO {
     private LocalDateTime fecha;
     private Long publicacionId;
     private Long usuarioId;
-
-    public ComentarioDTO() {}
+    private String username;
+    private String rol;
 
     public ComentarioDTO(Long id, String contenido, LocalDateTime fecha,
-                         Long publicacionId, Long usuarioId) {
+                     Long publicacionId, Long usuarioId) {
         this.id = id;
         this.contenido = contenido;
         this.fecha = fecha;
         this.publicacionId = publicacionId;
         this.usuarioId = usuarioId;
+    }
+
+
+    public ComentarioDTO(Long id, String contenido, LocalDateTime fecha,
+                         Long publicacionId, Long usuarioId,
+                         String username, String rol) {
+        this.id = id;
+        this.contenido = contenido;
+        this.fecha = fecha;
+        this.publicacionId = publicacionId;
+        this.usuarioId = usuarioId;
+        this.username = username;
+        this.rol = rol;
     }
 
     public Long getId() {
@@ -60,6 +73,19 @@ public class ComentarioDTO {
         this.usuarioId = usuarioId;
     }
 
-    
-}
+    public String getUsername() {
+        return username;
+    }
 
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getRol() {
+        return rol;
+    }
+
+    public void setRol(String rol) {
+        this.rol = rol;
+    }
+}

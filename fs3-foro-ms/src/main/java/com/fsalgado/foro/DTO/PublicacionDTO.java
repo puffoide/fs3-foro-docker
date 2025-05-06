@@ -9,17 +9,19 @@ public class PublicacionDTO {
     private LocalDateTime fechaCreacion;
     private Long categoriaId;
     private Long usuarioId;
+    private String usuarioUsername;
 
     public PublicacionDTO() {}
 
     public PublicacionDTO(Long id, String titulo, String contenido, LocalDateTime fechaCreacion,
-                          Long categoriaId, Long usuarioId) {
+                          Long categoriaId, Long usuarioId, String usuarioUsername) {
         this.id = id;
         this.titulo = titulo;
         this.contenido = contenido;
         this.fechaCreacion = fechaCreacion;
         this.categoriaId = categoriaId;
         this.usuarioId = usuarioId;
+        this.usuarioUsername = usuarioUsername;
     }
 
     public Long getId() {
@@ -70,7 +72,13 @@ public class PublicacionDTO {
         this.usuarioId = usuarioId;
     }
 
+    public String getUsuarioUsername() {
+        return usuarioUsername;
+    }
 
+    public void setUsuarioUsername(String usuarioUsername) {
+        this.usuarioUsername = usuarioUsername;
+    }
     
 }
 

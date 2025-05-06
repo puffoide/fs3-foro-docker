@@ -1,6 +1,7 @@
 package com.fsalgado.foro.service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,7 +57,8 @@ public class ForoService {
                         p.getContenido(),
                         p.getFechaCreacion(),
                         p.getCategoria().getId(),
-                        p.getUsuario().getId()
+                        p.getUsuario().getId(),
+                        p.getUsuario().getUsername()
                 )).collect(Collectors.toList());
     }
 
@@ -75,7 +77,7 @@ public class ForoService {
         p.setUsuario(user);
 
         Publicacion saved = publicacionRepo.save(p);
-        return new PublicacionDTO(saved.getId(), saved.getTitulo(), saved.getContenido(), saved.getFechaCreacion(), saved.getCategoria().getId(), saved.getUsuario().getId());
+        return new PublicacionDTO(saved.getId(), saved.getTitulo(), saved.getContenido(), saved.getFechaCreacion(), saved.getCategoria().getId(), saved.getUsuario().getId(), saved.getUsuario().getUsername());
     }
 
     public PublicacionDTO updatePublicacion(Long id, PublicacionDTO dto) {
@@ -93,7 +95,7 @@ public class ForoService {
             p.setUsuario(user);
 
             Publicacion updated = publicacionRepo.save(p);
-            return new PublicacionDTO(updated.getId(), updated.getTitulo(), updated.getContenido(), updated.getFechaCreacion(), updated.getCategoria().getId(), updated.getUsuario().getId());
+            return new PublicacionDTO(updated.getId(), updated.getTitulo(), updated.getContenido(), updated.getFechaCreacion(), updated.getCategoria().getId(), updated.getUsuario().getId(), updated.getUsuario().getUsername());
         }).orElseThrow(() -> new RuntimeException("Publicación no encontrada"));
     }
 
@@ -140,16 +142,32 @@ public class ForoService {
         return comentarioRepo.findAll().stream()
                 .filter(c -> c.getPublicacion().getId().equals(publicacionId))
                 .map(c -> new ComentarioDTO(
-                        c.getId(),
-                        c.getContenido(),
-                        c.getFechaComentario(),
-                        c.getPublicacion().getId(),
-                        c.getUsuario().getId()
-                ))
+                c.getId(),
+                c.getContenido(),
+                c.getFechaComentario(),
+                c.getPublicacion().getId(),
+                c.getUsuario().getId(),
+                c.getUsuario().getUsername(),
+                c.getUsuario().getRole().name()
+            ))
                 .collect(Collectors.toList());
     }
 
     public void deleteComentario(Long id) {
         comentarioRepo.deleteById(id);
+    }
+
+    public Optional<PublicacionDTO> getPublicacionById(Long id) {
+        return publicacionRepo.findById(id).map(p ->
+            new PublicacionDTO(
+                p.getId(),
+                p.getTitulo(),
+                p.getContenido(),
+                p.getFechaCreacion(),
+                p.getCategoria().getId(),
+                p.getUsuario().getId(),
+                p.getUsuario().getUsername()
+            )
+        );
     }
 }
