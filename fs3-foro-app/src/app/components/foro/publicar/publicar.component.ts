@@ -28,8 +28,7 @@ export class PublicarComponent implements OnInit {
     this.form = this.fb.group({
       titulo: ['', [Validators.required, Validators.minLength(5)]],
       contenido: ['', [Validators.required, Validators.minLength(10)]],
-      categoriaId: ['', Validators.required],
-      usuarioId: [1] // simulado, reemplazar por sesión real
+      categoriaId: ['', Validators.required]
     });
   }
 
@@ -38,24 +37,27 @@ export class PublicarComponent implements OnInit {
       this.router.navigate(['/login']);
       return;
     }
-  
-    this.foroService.getCategorias().subscribe({
+
+    this.foroService.obtenerCategorias().subscribe({
       next: data => this.categorias = data,
       error: () => alert('Error al cargar categorías')
     });
-  
-    const usuario = this.authService.obtenerUsuarioActivo();
-    if (usuario) {
-      this.form.patchValue({ usuarioId: usuario.id });
-    }
-  }  
+  }
 
   publicar(): void {
     this.submitted = true;
     if (this.form.invalid) return;
 
+    const usuario = this.authService.obtenerUsuarioActivo();
+    console.log(usuario)
+    if (!usuario) {
+      alert('Usuario no autenticado');
+      return;
+    }
+
     const publicacion = {
       ...this.form.value,
+      usuarioId: usuario.id,
       fechaCreacion: new Date().toISOString()
     };
 

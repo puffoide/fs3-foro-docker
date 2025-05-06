@@ -1,0 +1,30 @@
+<div class="container mt-4">
+    <h3>Usuarios registrados</h3>
+  
+    <div *ngIf="loading" class="alert alert-info">Cargando usuarios...</div>
+    <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
+  
+    <table class="table table-bordered table-hover" *ngIf="usuarios.length">
+      <thead class="table-dark">
+        <tr>
+          <th>ID</th>
+          <th>Nombre de usuario</th>
+          <th>Rol</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let usuario of usuarios">
+          <td>{{ usuario.id }}</td>
+          <td>{{ usuario.username }}</td>
+          <td>{{ usuario.role }}</td>
+          <td>
+            <button class="btn btn-danger btn-sm" (click)="eliminarUsuario(usuario.id)">Eliminar</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  
+    <div *ngIf="!usuarios.length && !loading" class="alert alert-warning">No hay usuarios registrados.</div>
+  </div>
+  

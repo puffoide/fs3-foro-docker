@@ -5,4 +5,5 @@ export interface PublicacionDTO {
     fechaCreacion: string;
     categoriaId: number;
     usuarioId: number;
+    usuarioUsername: string;
   }  

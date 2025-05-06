@@ -4,14 +4,14 @@ import { ForoService } from '../../../services/foro.service';
 import { PublicacionDTO } from '../../../models/publicacion.model';
 import { ComentarioDTO } from '../../../models/comentario.model';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { AutenticacionService } from '../../../services/autenticacion.service';
 
 @Component({
   selector: 'app-publicacion-detalle',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterModule, FormsModule],
   templateUrl: './publicacion-detalle.component.html',
   styleUrls: ['./publicacion-detalle.component.scss']
 })
@@ -32,41 +32,134 @@ export class PublicacionDetalleComponent implements OnInit {
       contenido: ['', Validators.required],
       usuarioId: [1],
     });
+    this.publicacionForm = this.fb.group({
+      titulo: ['', Validators.required],
+      contenido: ['', Validators.required],
+    });    
   }
 
+  usuarioActual: any;
+  modoEdicionPublicacion = false;
+  publicacionForm: FormGroup;
+  
   ngOnInit(): void {
     if (!this.authService.estaAutenticado()) {
       this.router.navigate(['/login']);
       return;
     }
+
+    if (this.publicacion) {
+      this.publicacionForm.patchValue({
+        titulo: this.publicacion.titulo,
+        contenido: this.publicacion.contenido
+      });
+    }
   
     const id = Number(this.route.snapshot.paramMap.get('id'));
     this.foroService.getPublicacion(id).subscribe(p => this.publicacion = p);
-    this.foroService.getComentariosByPublicacion(id).subscribe(c => this.comentarios = c);
+    this.foroService.getComentariosByPublicacion(id).subscribe(c => {
+      this.comentarios = c.map(com => ({ ...com, editando: false }));
+    });
   
     const usuario = this.authService.obtenerUsuarioActivo();
     if (usuario) {
+      this.usuarioActual = usuario;
       this.comentarioForm.patchValue({ usuarioId: usuario.id });
     }
   }
   
+  puedeModificarComentario(com: ComentarioDTO): boolean {
+    return this.usuarioActual && (this.usuarioActual.id === com.usuarioId || this.usuarioActual.role === 'ADMIN');
+  }
+  
+  editarComentario(com: any): void {
+    com.editando = true;
+  }
+  
+  cancelarEdicion(com: any): void {
+    com.editando = false;
+  }
+  
+  guardarComentario(com: any): void {
+    const actualizado: ComentarioDTO = {
+      ...com,
+      fecha: new Date().toISOString()
+    };
+  
+    if (actualizado.id !== undefined) {
+      this.foroService.editarComentario(actualizado.id, actualizado).subscribe(res => {
+        com.editando = false;
+      });
+    } else {
+      console.error('No se puede editar el comentario porque no tiene un ID definido.');
+    }
+  }
+  
+
+  puedeEliminarComentario(comentario: ComentarioDTO): boolean {
+    const usuario = this.authService.obtenerUsuarioActivo();
+    return usuario != null && (usuario.id === comentario.usuarioId || usuario.role === 'ADMIN');
+  }
+  
+  
+  eliminarComentario(id: number): void {
+    if (confirm('¿Estás seguro de eliminar este comentario?')) {
+      this.foroService.eliminarComentario(id).subscribe(() => {
+        this.comentarios = this.comentarios.filter(c => c.id !== id);
+      });
+    }
+  }
 
   enviarComentario(): void {
     this.submitted = true;
     if (this.comentarioForm.invalid || !this.publicacion) return;
-
-    const nuevo: ComentarioDTO = {
-      id: 0,
+  
+    const nuevoComentario: Omit<ComentarioDTO, 'id'> = {
       contenido: this.comentarioForm.value.contenido,
       fecha: new Date().toISOString(),
       usuarioId: this.comentarioForm.value.usuarioId,
       publicacionId: this.publicacion.id
     };
-
-    this.foroService.agregarComentario(nuevo).subscribe(c => {
-      this.comentarios.push(c);
+  
+    this.foroService.agregarComentario(nuevoComentario).subscribe(c => {
+      this.comentarios.push({ ...c, editando: false });
       this.comentarioForm.reset();
       this.submitted = false;
     });
+  }  
+
+  editarPublicacion(): void {
+    if (!this.publicacion) return;
+    this.router.navigate(['/editar-publicacion', this.publicacion.id]);
   }
+  
+  guardarEdicionPublicacion(): void {
+    if (this.publicacionForm.invalid || !this.publicacion) return;
+  
+    const editada = {
+      ...this.publicacion,
+      titulo: this.publicacionForm.value.titulo,
+      contenido: this.publicacionForm.value.contenido
+    };
+  
+    this.foroService.editarPublicacion(editada).subscribe(p => {
+      this.publicacion = p;
+      this.modoEdicionPublicacion = false;
+    });
+  }
+
+  puedeEditarPublicacion(): boolean {
+    const usuario = this.authService.obtenerUsuarioActivo();
+    return usuario?.role === 'ADMIN';
+  }  
+
+  eliminarPublicacion(): void {
+    if (!this.publicacion) return;
+    if (confirm('¿Estás seguro de que deseas eliminar esta publicación?')) {
+      this.foroService.eliminarPublicacion(this.publicacion.id).subscribe(() => {
+        this.router.navigate(['/foro']);
+      });
+    }
+  }
+  
 }

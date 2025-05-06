@@ -1,0 +1,39 @@
+<div class="container mt-4">
+    <h3>Administrar Categorías</h3>
+  
+    <form [formGroup]="categoriaForm" (ngSubmit)="guardarCategoria()" class="mb-3">
+      <div class="mb-3">
+        <label for="nombre" class="form-label">Nombre de la categoría</label>
+        <input id="nombre" class="form-control" formControlName="nombre" />
+      </div>
+      <button class="btn btn-primary" type="submit">
+        {{ modoEdicion ? 'Actualizar' : 'Agregar' }}
+      </button>
+      <button class="btn btn-secondary ms-2" type="button" *ngIf="modoEdicion" (click)="resetForm()">Cancelar</button>
+    </form>
+  
+    <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
+  
+    <table class="table table-bordered" *ngIf="categorias.length">
+      <thead class="table-dark">
+        <tr>
+          <th>ID</th>
+          <th>Nombre</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let cat of categorias">
+          <td>{{ cat.id }}</td>
+          <td>{{ cat.nombre }}</td>
+          <td>
+            <button class="btn btn-sm btn-warning me-2" (click)="editarCategoria(cat)">Editar</button>
+            <button class="btn btn-sm btn-danger" (click)="eliminarCategoria(cat.id)">Eliminar</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  
+    <div *ngIf="!categorias.length" class="alert alert-warning">No hay categorías registradas.</div>
+  </div>
+  

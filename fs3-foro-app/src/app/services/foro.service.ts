@@ -26,18 +26,45 @@ export class ForoService {
     return this.http.get<ComentarioDTO[]>(`${this.apiUrl}/comentarios/publicacion/${publicacionId}`);
   }
   
-  agregarComentario(comentario: ComentarioDTO): Observable<ComentarioDTO> {
+  agregarComentario(comentario: Omit<ComentarioDTO, 'id'>): Observable<ComentarioDTO> {
     return this.http.post<ComentarioDTO>(`${this.apiUrl}/comentarios`, comentario);
-  }
-
-  getCategorias(): Observable<CategoriaDTO[]> {
-    return this.http.get<CategoriaDTO[]>(`${this.apiUrl}/categorias`);
-  }
+  }  
   
   crearPublicacion(data: any): Observable<any> {
     return this.http.post(`${this.apiUrl}/publicaciones`, data);
   }
+
+  editarPublicacion(pub: PublicacionDTO): Observable<PublicacionDTO> {
+    return this.http.put<PublicacionDTO>(`${this.apiUrl}/publicaciones/${pub.id}`, pub);
+  }
   
+  eliminarPublicacion(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/publicaciones/${id}`);
+  }  
+  
+  obtenerCategorias() {
+    return this.http.get<CategoriaDTO[]>(`${this.apiUrl}/categorias`);
+  }
+  
+  crearCategoria(nombre: string) {
+    return this.http.post(`${this.apiUrl}/categorias`, { nombre });
+  }
+  
+  actualizarCategoria(id: number, nombre: string) {
+    return this.http.put(`${this.apiUrl}/categorias/${id}`, { nombre });
+  }
+  
+  eliminarCategoria(id: number) {
+    return this.http.delete(`${this.apiUrl}/categorias/${id}`);
+  }
+
+  editarComentario(id: number, comentario: ComentarioDTO) {
+    return this.http.put<ComentarioDTO>(`${this.apiUrl}/comentarios/${id}`, comentario);
+  }
+  
+  eliminarComentario(id: number) {
+    return this.http.delete<void>(`${this.apiUrl}/comentarios/${id}`);
+  }
   
   
 }

@@ -40,6 +40,10 @@ export class ForoComponent implements OnInit {
       }
     });
   }
+
+  irADetalle(id: number): void {
+    this.router.navigate(['/publicacion', id]);
+  }
   
   
 }

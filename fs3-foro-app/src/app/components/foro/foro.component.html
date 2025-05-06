@@ -15,16 +15,18 @@
   
     <div class="row row-cols-1 row-cols-md-2 g-4 mt-3" *ngIf="!loading && publicaciones.length > 0">
       <div class="col" *ngFor="let pub of publicaciones">
-        <div class="card h-100">
+        <div class="card h-100" (click)="irADetalle(pub.id)" style="cursor: pointer;">
           <div class="card-body">
             <h5 class="card-title">{{ pub.titulo }}</h5>
             <p class="card-text">{{ pub.contenido | slice:0:150 }}...</p>
           </div>
           <div class="card-footer">
-            <small class="text-muted">Publicado por usuario ID {{ pub.usuarioId }} en {{ pub.fechaCreacion | date:'short' }}</small>
+            <small class="text-muted">
+              Publicado por {{ pub.usuarioUsername }} en {{ pub.fechaCreacion | date:'short' }}
+            </small>
           </div>
         </div>
       </div>
-    </div>
+    </div>    
   </div>
   

@@ -20,7 +20,7 @@ export class AutenticacionService {
     return new Observable(observer => {
       this.http.post(`${this.apiUrl}/login`, credentials, { responseType: 'text' }).subscribe({
         next: () => {
-          this.obtenerUsuarioPorUsername(credentials.usuario).subscribe({
+          this.obtenerUsuarioPorUsername(credentials.username).subscribe({
             next: user => {
               this.setCurrentUser(user);
               observer.next(user);
@@ -35,17 +35,18 @@ export class AutenticacionService {
   }
 
   register(data: UserDTO): Observable<UserDTO> {
-    return new Observable(observer => {
-      this.http.post<UserDTO>(`${this.apiUrl}/register`, data).subscribe({
-        next: user => {
-          this.setCurrentUser(user);
-          observer.next(user);
-          observer.complete();
-        },
-        error: err => observer.error(err)
-      });
+  return new Observable(observer => {
+    this.http.post<UserDTO>(`${this.apiUrl}/register`, data).subscribe({
+      next: user => {
+        this.setCurrentUser(user);
+        observer.next(user);
+        observer.complete();
+      },
+      error: err => observer.error(err)
     });
-  }
+  });
+}
+
 
   updateUser(id: number, user: UserDTO): Observable<UserDTO> {
     return new Observable(observer => {
@@ -109,4 +110,13 @@ export class AutenticacionService {
     const data = localStorage.getItem('user');
     this.currentUser = data ? JSON.parse(data) : null;
   }
+
+  obtenerTodosLosUsuarios() {
+    return this.http.get<UserDTO[]>(`${this.apiUrl}/users`);
+  }
+
+  eliminarUsuario(id: number) {
+    return this.http.delete(`${this.apiUrl}/user/${id}`);
+  }
+
 }
