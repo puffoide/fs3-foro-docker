@@ -17,6 +17,10 @@ import com.fsalgado.foro.model.User;
 import com.fsalgado.foro.repository.CategoriaRepository;
 import com.fsalgado.foro.repository.ComentarioRepository;
 import com.fsalgado.foro.repository.PublicacionRepository;
+import com.fsalgado.foro.repository.UserRepository;
+
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 
 @Service
 public class ForoService {
@@ -27,6 +31,9 @@ public class ForoService {
     private PublicacionRepository publicacionRepo;
     @Autowired
     private ComentarioRepository comentarioRepo;
+    @Autowired
+    private UserRepository userRepo;
+
 
     public List<CategoriaDTO> getAllCategorias() {
         return categoriaRepo.findAll().stream()
@@ -99,8 +106,14 @@ public class ForoService {
         }).orElseThrow(() -> new RuntimeException("Publicación no encontrada"));
     }
 
+    @Transactional
     public void deletePublicacion(Long id) {
-        publicacionRepo.deleteById(id);
+        Optional<Publicacion> pubOpt = publicacionRepo.findById(id);
+        if (pubOpt.isPresent()) {
+            publicacionRepo.delete(pubOpt.get());
+        } else {
+            throw new EntityNotFoundException("Publicación no encontrada con ID: " + id);
+        }
     }
 
     public ComentarioDTO addComentario(ComentarioDTO dto) {
@@ -129,12 +142,12 @@ public class ForoService {
             p.setId(dto.getPublicacionId());
             c.setPublicacion(p);
 
-            User u = new User();
-            u.setId(dto.getUsuarioId());
+            User u = userRepo.findById(dto.getUsuarioId())
+            .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
             c.setUsuario(u);
 
             Comentario updated = comentarioRepo.save(c);
-            return new ComentarioDTO(updated.getId(), updated.getContenido(), updated.getFechaTime(), updated.getPublicacion().getId(), updated.getUsuario().getId());
+            return new ComentarioDTO(updated.getId(), updated.getContenido(), updated.getFechaTime(), updated.getPublicacion().getId(), u.getId(), u.getUsername(), u.getRole().name());
         }).orElseThrow(() -> new RuntimeException("Comentario no encontrado"));
     }
 

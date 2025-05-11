@@ -55,7 +55,7 @@ export class RegistroComponent {
       next: () => {
         // this.authService.guardarUsuarioEnSesion(nuevoUsuario);
         this.registroExitoso = true;
-        setTimeout(() => this.router.navigate(['/login']), 1500);
+        setTimeout(() => this.router.navigate(['/foro']), 1500);
       },
       error: () => {
         this.registroError = true;

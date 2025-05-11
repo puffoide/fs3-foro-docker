@@ -1,6 +1,7 @@
 package com.fsalgado.foro.model;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import jakarta.persistence.*;
 
@@ -19,6 +20,10 @@ public class Publicacion {
     @ManyToOne
     @JoinColumn(name = "usuario_id")
     private User usuario;
+    @OneToMany(mappedBy = "publicacion", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Comentario> comentarios;
+
+
     public Long getId() {
         return id;
     }

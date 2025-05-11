@@ -2,14 +2,21 @@ package com.fsalgado.foro.DTO;
 
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ComentarioDTO {
     private Long id;
     private String contenido;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
     private LocalDateTime fecha;
     private Long publicacionId;
     private Long usuarioId;
     private String username;
     private String rol;
+
+    public ComentarioDTO() {}
 
     public ComentarioDTO(Long id, String contenido, LocalDateTime fecha,
                      Long publicacionId, Long usuarioId) {

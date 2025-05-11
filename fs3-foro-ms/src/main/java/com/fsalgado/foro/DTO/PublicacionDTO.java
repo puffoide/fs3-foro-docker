@@ -2,10 +2,13 @@ package com.fsalgado.foro.DTO;
 
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 public class PublicacionDTO {
     private Long id;
     private String titulo;
     private String contenido;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
     private LocalDateTime fechaCreacion;
     private Long categoriaId;
     private Long usuarioId;

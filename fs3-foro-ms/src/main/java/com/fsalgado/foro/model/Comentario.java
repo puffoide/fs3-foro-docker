@@ -13,7 +13,7 @@ public class Comentario {
     private String contenido;
     private LocalDateTime fecha;
     @ManyToOne
-    @JoinColumn(name = "publicacion_id")
+    @JoinColumn(name = "publicacion_id", nullable = false)
     private Publicacion publicacion;
     @ManyToOne
     @JoinColumn(name = "usuario_id")

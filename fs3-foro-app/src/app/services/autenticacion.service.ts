@@ -9,7 +9,8 @@ import { LoginDTO } from '../models/login.model';
 })
 export class AutenticacionService {
 
-  private apiUrl = 'http://localhost:8080/foro';
+  // private apiUrl = 'http://localhost:8080/foro';
+  private apiUrl = 'http://ip172-18-0-7-d0ghsvi91nsg008dtvi0-8080.direct.labs.play-with-docker.com/foro';
   private currentUser: UserDTO | null = null;
 
   constructor(private http: HttpClient) {
